@@ -12,6 +12,25 @@ import { json } from 'react-router-dom';
 import Tabs from './Tabs';
 import AddTabModal from './addTabModal';
 
+const isChromeExtension = () =>
+  typeof chrome !== "undefined" && chrome.storage?.local;
+
+const safeStorageSet = (key, value) => {
+  if (isChromeExtension()) {
+    chrome.storage.local.set({ [key]: value });
+  }
+};
+
+const safeStorageGet = async (key) => {
+  return new Promise((resolve) => {
+    if (isChromeExtension()) {
+      chrome.storage.local.get([key], (result) => resolve(result[key]));
+    } else {
+      resolve(null); // fallback for local dev
+    }
+  });
+};
+
 function Notepad() {
 
   // states 
@@ -28,13 +47,27 @@ function Notepad() {
   const [tab, settab] = useState([{ sno: 1, data: "", title: "" }]);
   const [activeTab, setactiveTab] = useState(1);
 
-
   useEffect(() => {
-    localStorage.setItem("tab", JSON.stringify(tab));
+    const loadTabs = async () => {
+      const savedTabs = (await safeStorageGet("tab")) || [{ sno: 1, data: "", title: "" }];
+      const savedActiveTab = parseInt(await safeStorageGet("activeTab")) || 1;
+      settab(savedTabs);
+      setactiveTab(savedActiveTab);
+
+      const activeTabData = savedTabs.find(t => t.sno === savedActiveTab);
+      if (activeTabData) setNotes(activeTabData.data || "");
+    };
+    loadTabs();
+  }, []);
+
+  // Save tabs to storage
+  useEffect(() => {
+    safeStorageSet("tab", tab);
   }, [tab]);
 
+  // Save activeTab to storage
   useEffect(() => {
-    localStorage.setItem("activeTab", activeTab);
+    safeStorageSet("activeTab", activeTab);
   }, [activeTab]);
 
   const removeTab = (sno) => {
@@ -71,95 +104,91 @@ function Notepad() {
   };
 
   const openAddTabModal = () => {
-  setTabTitle("");
-  setShowAddTabModal(true);
-};
+    setTabTitle("");
+    setShowAddTabModal(true);
+  };
 
-const confirmAddTab = () => {
-  if (!tabTitle.trim()) {
-    alert("Please enter a title.");
-    return;
-  }
-  const newSno = tab.length ? tab[tab.length - 1].sno + 1 : 1;
-  const newTab = { sno: newSno, data: "", title: tabTitle.trim() };
-  const updatedTabs = [...tab, newTab];
-  settab(updatedTabs);
-  setactiveTab(newSno);
-  setNotes("");
-  setShowAddTabModal(false);
-};
-
-
-  useEffect(() => {
-    const savedTabs = JSON.parse(localStorage.getItem("tab")) || [{ sno: 1, data: "" }];
-    const savedActiveTab = parseInt(localStorage.getItem("activeTab")) || 1;
-
-    // if (savedTabs.length > 0) {
-    settab(savedTabs);
-    // }
-    setactiveTab(savedActiveTab);
-
-    const activeTabData = savedTabs.find(t => t.sno === savedActiveTab);
-    if (activeTabData) {
-      setNotes(activeTabData.data);
+  const confirmAddTab = () => {
+    if (!tabTitle.trim()) {
+      alert("Please enter a title.");
+      return;
     }
-  }, []);
+    const newSno = tab.length ? tab[tab.length - 1].sno + 1 : 1;
+    const newTab = { sno: newSno, data: "", title: tabTitle.trim() };
+    const updatedTabs = [...tab, newTab];
+    settab(updatedTabs);
+    setactiveTab(newSno);
+    setNotes("");
+    setShowAddTabModal(false);
+  };
 
-  //  click handlers
   const upclick = () => {
-    setNotes(notes.toUpperCase())
-    localStorage.setItem("key", notes.toUpperCase())
-  }
+    const updated = notes.toUpperCase();
+    setNotes(updated);
+    safeStorageSet("key", updated);
+  };
+
   const downclick = () => {
-    setNotes(notes.toLowerCase())
-    localStorage.setItem("key", notes.toLowerCase())
-  }
+    const updated = notes.toLowerCase();
+    setNotes(updated);
+    safeStorageSet("key", updated);
+  };
+
   const copy = () => {
-    let clipbrd = document.getElementById('textbox')
-    clipbrd.select()
-    navigator.clipboard.writeText(clipbrd.value)
-    document.getSelection().removeAllRanges()
-  }
+    let clipbrd = document.getElementById('textbox');
+    clipbrd.select();
+    navigator.clipboard.writeText(clipbrd.value);
+    document.getSelection().removeAllRanges();
+  };
+
   const cut = () => {
-    let clipbrd = document.getElementById('textbox')
-    clipbrd.select()
-    navigator.clipboard.writeText(clipbrd.value)
-    document.getSelection().removeAllRanges()
-    setNotes("")
-    localStorage.setItem("key", "")
-  }
+    let clipbrd = document.getElementById('textbox');
+    clipbrd.select();
+    navigator.clipboard.writeText(clipbrd.value);
+    document.getSelection().removeAllRanges();
+    setNotes("");
+    safeStorageSet("key", "");
+  };
+
   const paste = async () => {
     const text = await navigator.clipboard.readText();
-    setNotes(notes + text)
-    localStorage.setItem("key", notes + text)
-  }
+    const combined = notes + text;
+    setNotes(combined);
+    safeStorageSet("key", combined);
+  };
+
   const capital1st = () => {
-    let arr = notes.split(" ")
-    let arr2 = arr.map((n) => n.slice(0, 1).toUpperCase().concat(n.slice(1).toLowerCase()))
-    setNotes(arr2.join(" "))
-    localStorage.setItem("key", arr2.join(" "))
-  }
+    const updated = notes
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+    setNotes(updated);
+    safeStorageSet("key", updated);
+  };
+
   const eraseall = () => {
-    setNotes("")
-    localStorage.setItem("key", "")
-  }
+    setNotes("");
+    safeStorageSet("key", "");
+  };
+
   const replace = () => {
-    setSelect(!select)
-  }
+    setSelect(!select);
+  };
+
   const closemodal = () => {
-    setSelect(false)
-    setNotes(notes.split(prevword + " ").join(newword + " "))
-    localStorage.setItem("key", notes.split(prevword + " ").join(newword + " "))
-  }
+    setSelect(false);
+    const replaced = notes.split(prevword + " ").join(newword + " ");
+    setNotes(replaced);
+    safeStorageSet("key", replaced);
+  };
+
   const fontstylecng = () => {
     let cards = document.getElementById('cards')
     setFont(cards.value)
-    // localStorage.setItem("key",notes) bugg
   }
   const fontsizecng = () => {
     let cards2 = document.getElementById('cards2')
     setSize(cards2.value)
-    // localStorage.setItem("key",notes)  bugg
   }
   const requestTarunToDownload = () => {
     // sourced from internet

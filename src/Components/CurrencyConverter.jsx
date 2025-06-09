@@ -56,7 +56,7 @@ const currency = [
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-[70vh] bg-gradient-to-b from-white to-blue-300 smooth-entry">
+      <div className="flex flex-col justify-center items-center min-h-[80vh] bg-gradient-to-b from-white to-blue-300 smooth-entry">
 
         <div className="relative bg-white shadow-[0px_5px_5px_rgba(13,69,77,0.5)] rounded-xl border border-slate-400 p-5 flex flex-col gap-4 justify-center items-center" ref={inputRef}>
           <input
