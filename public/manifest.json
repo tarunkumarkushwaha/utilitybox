@@ -1,0 +1,17 @@
+{
+  "name": "Utility tools Chrome extension",
+  "version": "1.0.0",
+  "description": "Extension that provides free utility tools",
+  "manifest_version": 3,
+  "icons": {
+    "16": "favicon-16x16.png",
+    "32": "favicon-32x32.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "action": { 
+    "default_title": "utility tools",
+    "default_popup": "index.html" ,
+    "default_icon": "favicon-16x16.png"}
+}

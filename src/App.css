@@ -1,0 +1,338 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* for extension  */
+
+body,
+html {
+  width: 580px;
+  /* height: 600px; */
+}
+
+.smooth-entry {
+  animation-name: entry;
+  animation-duration: 0.25s;
+}
+
+.smooth-exit {
+  animation-name: exit;
+  animation-duration: 0.25s;
+}
+
+@keyframes entry {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes exit {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.active {
+  box-shadow: 0px 5px 5px rgba(13, 69, 77, 0.5);
+  border-radius: 15px;
+  height: 3rem;
+}
+
+button,
+.tab {
+  cursor: pointer;
+  font-weight: bold;
+  color: #000333;
+  height: 40px;
+  width: 70px;
+  margin: 5px;
+  border-radius: 15px;
+  box-shadow: 0px 5px 5px rgba(13, 69, 77, 0.5);
+}
+
+button:active {
+  background-color: #66ada4;
+}
+
+button:hover,
+select:hover {
+  border: 2px solid #005f57;
+  transform: scale(1.05);
+}
+
+.select {
+  margin: 1px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bolder;
+  color: #000333;
+  box-shadow: 0px 5px 5px rgba(13, 69, 77, 0.5);
+  width: 100px;
+  height: 40px;
+}
+
+.to-do {
+  text-align: left;
+  padding-inline: 5px;
+  overflow-wrap: break-word;
+}
+
+.deletetodo {
+  cursor: pointer;
+  border-radius: 100%;
+  color: red;
+  background-color: #f7efeffd;
+  border: 1px solid #000108;
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  width: 25px;
+  padding: auto;
+}
+
+.todoCheck {
+  margin-inline: 8px;
+  outline: none;
+}
+
+.completedtodo {
+  color: grey;
+  text-decoration: line-through;
+  text-align: left;
+  padding-inline: 5px;
+  overflow-wrap: break-word;
+}
+
+.todo-display {
+  background-color: #d7f4fa;
+  border-radius: 10px;
+  margin: 17px;
+  padding: 10px;
+  min-width: 90%;
+  min-height: 50vh;
+  font-size: larger;
+}
+
+.tododiv {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  position: relative;
+  background-color: #83c4f8;
+  border: 2px solid #39a6ff;
+  padding: 1%;
+  padding-inline: 3%;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+/* clockcss */
+
+.clock-body {
+  background-repeat: no-repeat;
+}
+
+.dial1 {
+  background-color: #abb5b88e;
+  border-radius: 10px;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.modal-bg1 {
+  background-color: #2b769c;
+  justify-content: space-between;
+  color: aliceblue;
+}
+
+.modal-bg2 {
+  background-color: #9a9d9e;
+}
+
+.modal-bg3 {
+  padding-top: 20px;
+}
+
+.clocksettingmenu {
+  height: 75vh;
+}
+
+.closeButton {
+  color: #071579;
+  background-color: #c2dfdf;
+  height: 30px;
+  width: 30px;
+  margin-left: 20px;
+}
+
+.alarmtimebox {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.alarmbuttons {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  height: 50px;
+  width: 200px;
+  font-size: 20px;
+  font-family: "Kanit", sans-serif;
+}
+
+.buttonalarm,
+.selectalarm {
+  text-align: center;
+  background-color: #b6ccd1;
+  opacity: 0.5;
+  font-size: 20px;
+  font-family: "Kanit", sans-serif;
+  height: 50px;
+  width: 200px;
+  border: 1px solid rgb(162, 167, 175);
+  border-radius: 10px;
+}
+
+/* weather/ */
+
+.weathersearch {
+  height: 40px;
+  width: 50vw;
+  background-color: #bde0fd;
+  font-size: larger;
+  line-height: 50px;
+}
+
+.WeatherContainer {
+  margin: 10px;
+  padding: 45px;
+  border: 2px solid rgb(209, 209, 231);
+  border-radius: 5%;
+  background-color: #b4dbee;
+  color: #000108;
+}
+
+.weathererror {
+  background-color: #b4dbee;
+  height: 50vh;
+  width: 50vw;
+  color: #000333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .dictionary */
+
+.dictionarybox {
+  background-color: #a2f5dc93;
+  border: 1px solid #1249ff52;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 50px;
+  margin: 10px;
+  margin-inline: 10px;
+}
+
+.meaningbox {
+  margin: 10px;
+}
+
+.resultimagedictionary {
+  padding: 0;
+  height: 150px;
+  width: 150px;
+}
+
+.textdict {
+  text-align: left;
+  color: #02149b;
+  font-style: italic;
+}
+
+.resultbox {
+  background-color: #a2f5dc93;
+  border: 1px solid #1249ff52;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 10px;
+  margin: 10px;
+  margin-inline: 10px;
+}
+
+.wordsearch {
+  text-align: center;
+  margin: 10px;
+  border: 3px solid #eaedee;
+  border-radius: 15px;
+  height: 40px;
+  width: 15vw;
+  background-color: #bdfcf6;
+  font-size: larger;
+  line-height: 50px;
+}
+
+.speakerlogo {
+  margin-left: 10px;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.searchWordbtn {
+  background-color: #44eed7;
+  margin: 10px;
+  height: 40px;
+  border-radius: 15px;
+  padding: 10px 10px;
+  text-align: center;
+  color: white;
+  border: 2px solid #44eed7;
+}
+
+.searchWordbtn:hover {
+  transition: 1s ease;
+  background-image: linear-gradient(
+    45deg,
+    #2fffee 0%,
+    #19f0d3 51%,
+    #2fffe3 100%
+  );
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+/* currencyBox */
+
+.currencyBox {
+  margin: 30px;
+  padding: 30px;
+  background-color: #b4dbee;
+  height: 60vh;
+  width: 50vw;
+  color: #000333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
