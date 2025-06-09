@@ -69,8 +69,8 @@ const Todo = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-b from-white to-blue-300 smooth-entry flex justify-center items-center flex-col h-[80vh] md:mt-0 mt-28">
-        <div className="flex flex-col md:flex-row justify-center items-center">
+      <div className="bg-gradient-to-b from-white to-blue-300 smooth-entry flex justify-center items-center flex-col h-[80vh] mt-10">
+        <div className="flex flex-row justify-center items-center">
           <input
             type="text"
             value={item.data}
@@ -86,7 +86,7 @@ const Todo = () => {
             Reset
           </button>
         </div>
-        <div className="flex flex-col md:flex-row justify-center items-center">
+        <div className="flex flex-row justify-center items-center">
           <p className="mx-5 font-medium">Completed tasks - {todo.filter((i) => i.completed == true).length} </p>
           <p className="mx-5 font-medium">Uncompleted tasks - {todo.length && todo.length - todo.filter((i) => i.completed == true).length} </p>
           <p className="mx-5 font-medium">Total tasks - {todo.length && todo.length}</p>

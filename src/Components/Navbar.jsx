@@ -15,7 +15,7 @@ const Navbar = () => {
           <button className='absolute top-4 left-4 w-12 text-black bg-white' onClick={togglenav}>
             <MenuIcon />
           </button>
-          <img className='w-44 h-16 md:ml-0 ml-10 rounded-xl' src={Logo} alt="Utility Box" />
+          <img className='w-44 h-16 ml-0 rounded-xl' src={Logo} alt="Utility Box" />
         </div>
         {nav &&
           <nav className="bg-gradient-to-b from-blue-300 to-white min-h-16 font-medium smooth-entry">

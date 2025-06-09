@@ -10,18 +10,19 @@ const CurrencyConverter = () => {
 
   const inputRef = useRef(null);
 
-  const currency = [
-    { name: "indian", value: 1 },
-    { name: "nepali", value: 1.6 },
-    { name: "usd", value: 0.012 },
-    { name: "euro", value: 0.011 },
-    { name: "yen", value: 1.88 },
-    { name: "pound", value: 0.0094 },
-    { name: "cny", value: 0.093 },      // update it
-    { name: "chf", value: 0.012 },
-    { name: "rub", value: 1.02 },
-    { name: "zar", value: 0.25 }
-  ];
+const currency = [
+  { name: "indian", value: 1 },          // INR
+  { name: "nepali", value: 1.60 },       // NPR
+  { name: "usd", value: 0.01166 },       // US Dollar
+  { name: "euro", value: 0.01024 },      // Euro
+  { name: "yen", value: 1.689 },         // Japanese Yen
+  { name: "pound", value: 0.00862 },     // British Pound
+  { name: "cny", value: 0.08382 },       // Chinese Yuan
+  { name: "chf", value: 0.00959 },       // Swiss Franc
+  { name: "rub", value: 0.914 },         // Russian Ruble
+  { name: "zar", value: 0.210 }          // South African Rand
+];
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -49,13 +50,13 @@ const CurrencyConverter = () => {
     let value1 = currency.filter((item, i) => { return item.name == inputValue })[0]?.value
     let value2 = currency.filter((item, i) => { return item.name == inputValue2 })[0]?.value
 
-    console.log(value1, value2)
+    // console.log(value1, value2)
     setoutput((1 / value1 * value2) * parseInt(amount))
   }
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-[90vh] bg-gradient-to-b from-white to-blue-300 smooth-entry">
+      <div className="flex flex-col justify-center items-center h-[70vh] bg-gradient-to-b from-white to-blue-300 smooth-entry">
 
         <div className="relative bg-white shadow-[0px_5px_5px_rgba(13,69,77,0.5)] rounded-xl border border-slate-400 p-5 flex flex-col gap-4 justify-center items-center" ref={inputRef}>
           <input
@@ -147,7 +148,7 @@ const CurrencyConverter = () => {
           </div>
           <button className='bg-white' onClick={handleConvert}>convert</button>
           <div className='font-bold text-3xl m-4 h-10'>{output?.toFixed(2)}</div>
-          <div className='font-normal text-xs m-1 h-5'>last updated may 2024</div>
+          <div className='font-normal text-xs m-1 h-5'>last updated 9 june 2025</div>
         </div>
 
       </div>
