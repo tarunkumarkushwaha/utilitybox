@@ -46,7 +46,7 @@ const Dictionary = () => {
         <>
             <audio src={SRCsound} loop={false} ref={currentsong} crossOrigin={'anonymous'}></audio>
             <div className="smooth-entry bg-gradient-to-b min-h-[75vh] from-white to-blue-300 flex flex-col justify-center items-center mt-0">
-                <div className="dictionarybox flex md:flex-row flex-col justify-center items-center">
+                <div className="dictionarybox flex flex-col justify-center items-center">
                     <input
                         type="text"
                         value={input}
@@ -56,13 +56,13 @@ const Dictionary = () => {
                         className="focus:outline-none w-full max-w-96 bg-white wordsearch shadow-[0px_5px_5px_rgba(13,69,77,0.5)]"
                     ></input>
                     <div className="flex flex-row justify-center items-center wrap">
+                        <button className="m-3 bg-slate-100" onClick={() => window.location.reload()}>Refresh</button>   
                         <button className="m-3 bg-slate-100" onClick={searchWord}>Search</button>
-                        <button className="m-3 bg-slate-100" onClick={() => window.location.reload()}>Refresh</button>
                     </div>
                 </div>
                 <div className={`resultbox ${Result ? "flex" : "hidden"} flex-col justify-center items-center`}>
                     {
-                        Result && Result.message ? <div className='flex flex-col justify-center items-center'>
+                        Result && Result.message ? <div className='flex flex-col justify-center items-center overflow-scroll'>
                             <h1>{Result.title}</h1>
                             <div>{Result.message}</div>
                             <div>{Result.resolution}</div>

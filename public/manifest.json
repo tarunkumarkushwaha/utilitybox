@@ -7,11 +7,21 @@
     "16": "favicon-16x16.png",
     "32": "favicon-32x32.png"
   },
-  "permissions": [
-    "storage"
-  ],
-  "action": { 
+  "action": {
     "default_title": "utility tools",
-    "default_popup": "index.html" ,
-    "default_icon": "favicon-16x16.png"}
+    "default_popup": "index.html",
+    "default_icon": "favicon-16x16.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "alarms",
+    "storage",
+    "notifications",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }

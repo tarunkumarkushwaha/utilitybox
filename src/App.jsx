@@ -15,6 +15,7 @@ import WeatherWidget from "./Components/WeatherWidget";
 import Dictionary from "./Components/Dictionary";
 import Navbar from "./Components/Navbar";
 import ImageSearch from "./Components/ImageSearch";
+import ClipboardManager from "./Components/ClipboardManager";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/weather" element={<><Navbar /><WeatherWidget /></>} />
           <Route path="/dictionary" element={<><Navbar /><Dictionary /></>} />
           <Route path="/tools" element={<><Navbar /><Tools /></>} />
+          <Route path="/clipboard" element={<><Navbar /><ClipboardManager/></>} />
         </Routes>
       </HashRouter>
       <Footer />
