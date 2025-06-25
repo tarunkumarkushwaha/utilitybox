@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import Calculator from "./Components/Calculator";
 import Footer from "./Components/Footer";
-import Todo from "./Components/Todo";
+import Todo from "./Components/TaskManager/Todo";
 import Tools from "./Components/Tools";
 import Notepad from "./Components/Notepad/Notepad";
 import AlarmClock from "./Components/AlarmClock";

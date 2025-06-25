@@ -71,8 +71,7 @@ button:active {
   background-color: #66ada4;
 }
 
-button:hover,
-select:hover {
+button:hover{
   border: 2px solid #005f57;
   transform: scale(1.05);
 }

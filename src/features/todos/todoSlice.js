@@ -22,11 +22,11 @@ export const todoSlice = createSlice({
 
     modTodo: (state,action) => {
       const item = {
-        data: action.payload.value,
+        ...action.payload,
         completed: action.payload.check
       }
       state.splice(action.payload.id, 1, item);
-      localStorage.setItem('items', JSON.stringify(state));
+      // localStorage.setItem('items', JSON.stringify(state));
     },
   },
 })
