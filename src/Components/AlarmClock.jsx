@@ -45,6 +45,7 @@ const AlarmClock = () => {
     const [alarmHr, setalarmHr] = useState(1);
     const [alarmAMPM, setalarmAMPM] = useState("AM");
     const [ampm, setampm] = useState("");
+    const [reminder, setreminder] = useState("");
     const [date, setdate] = useState("");
     const currentsong = useRef(null);
 
@@ -75,6 +76,7 @@ const AlarmClock = () => {
         chrome.runtime.sendMessage(
             {
                 type: "SET_ALARM",
+                text:reminder,
                 data: {
                     hr: alarmHr,
                     min: alarmMin,
@@ -120,35 +122,36 @@ const AlarmClock = () => {
     return (
         <>
             <audio src={src} loop={true} ref={currentsong} crossOrigin={'anonymous'}></audio>
-           
-                <div
-                    className="clock-body smooth-entry min-h-screen flex flex-col justify-start items-center p-4 bg-cover bg-center"
-                >
-                    {/* Clock Section */}
-                    <div
-                        className="flex flex-col justify-center items-center cursor"
-                        title="Click to open menu"
-                        onClick={() => setclockSetting(true)}
-                    >
-                        <div className="flex justify-center items-center mb-2">
-                            <div className="text-6xl sm:text-7xl font-bold">{time}</div>
-                            <div className="text-3xl sm:text-4xl font-bold ml-2">{ampm}</div>
-                        </div>
-                        <div className="text-xl sm:text-2xl mb-4 text-center">{date}</div>
-                    </div>
 
-                    {/* Calendar Section */}
-                    <div className="bg-white bg-opacity-70 text-black rounded-xl p-4 shadow-md w-full max-w-[500px]">
-                        <Calendar />
+            <div
+                className="clock-body smooth-entry min-h-screen flex flex-col justify-start items-center p-4 bg-cover bg-center"
+            >
+                {/* Clock Section */}
+                <div
+                    className="flex flex-col justify-center items-center cursor"
+                    title="Click to open menu"
+                    onClick={() => setclockSetting(true)}
+                >
+                    <div className="flex justify-center items-center mb-2">
+                        <div className="text-6xl sm:text-7xl font-bold">{time}</div>
+                        <div className="text-3xl sm:text-4xl font-bold ml-2">{ampm}</div>
                     </div>
+                    <div className="text-xl sm:text-2xl mb-4 text-center">{date}</div>
                 </div>
-            
+
+                {/* Calendar Section */}
+                <div className="bg-white bg-opacity-70 text-black rounded-xl p-4 shadow-md w-full max-w-[500px]">
+                    <Calendar />
+                </div>
+            </div>
+
 
             {clockSetting && (
                 <div className="fixed inset-0 bg-black/50 transition-opacity duration-200 z-50 flex justify-center items-center">
                     <div className="bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-semibold text-gray-800">Set Alarm</h2>
+                            <h2 className="text-xl font-semibold text-gray-800">Set Reminder</h2>
+                            
                             <button
                                 className="text-red-500 font-bold text-xl"
                                 onClick={() => setclockSetting(false)}
@@ -157,6 +160,16 @@ const AlarmClock = () => {
                                 X
                             </button>
                         </div>
+
+                        <input
+                                type="text"
+                                className="w-full cursor-text text-center border border-black h-10 rounded-xl mb-4 px-2 focus:outline-none border-transparent select"
+                                placeholder="Text"
+                                value={reminder}
+                                onChange={(e) => {
+                                    setreminder(e.target.value );
+                                }}
+                            />
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                             <select
@@ -209,7 +222,7 @@ const AlarmClock = () => {
                             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-medium"
                             onClick={alarmON ? alarmClear : alarmSet}
                         >
-                            {alarmON ? "STOP ALARM" : "SET ALARM"}
+                            {alarmON ? "STOP REMINDER" : "SET REMINDER"}
                         </button>
                     </div>
                 </div>

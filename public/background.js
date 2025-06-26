@@ -5,6 +5,8 @@ let alarmTimeout = null;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "SET_ALARM") {
     const { hr, min, sec, ampm } = request.data;
+    const text = request.text;
+    // console.log(text)
 
     const now = new Date();
     const alarmTime = new Date();
@@ -21,7 +23,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (alarmTimeout) clearTimeout(alarmTimeout);
 
       alarmTimeout = setTimeout(() => {
-        console.log("⏰ Alarm triggered");
+        // console.log("⏰ Alarm triggered");
         // Store a flag in storage
         chrome.storage.local.set({ alarmRang: true });
 
@@ -29,16 +31,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.notifications.create({
           type: "basic",
           iconUrl: "favicon-32x32.png",
-          title: "⏰ Alarm",
-          message: "Your alarm is ringing!",
+          title: `⏰ Reminder`,
+          message: text,
           priority: 2
         });
 
       }, delay);
 
-      sendResponse({ status: "Alarm set successfully" });
+      sendResponse({ status: "Reminder set successfully" });
     } else {
-      sendResponse({ status: "Alarm time is in the past" });
+      sendResponse({ status: "Reminder time is in the past" });
     }
 
     return true;
@@ -46,7 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === "CLEAR_ALARM") {
     if (alarmTimeout) clearTimeout(alarmTimeout);
-    sendResponse({ status: "Alarm cleared" });
+    sendResponse({ status: "Reminder cleared" });
     return true;
   }
 
