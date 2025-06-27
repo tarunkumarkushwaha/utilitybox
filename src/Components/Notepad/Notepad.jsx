@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Replacemodal from './Replacemodal'
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -8,6 +8,7 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import UseAnimation from '../../customhooks/TarunAnimation';
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import { json } from 'react-router-dom';
 import Tabs from './Tabs';
 import AddTabModal from './addTabModal';
@@ -42,10 +43,12 @@ function Notepad() {
   const [newword, setNewword] = useState("");
   const [font, setFont] = useState("normal");
   const [size, setSize] = useState("larger");
-  const [mobilenav, setmobilenav] = useState(false);
   const [showtab, setshowtab] = useState(false);
   const [tab, settab] = useState([{ sno: 1, data: "", title: "" }]);
   const [activeTab, setactiveTab] = useState(1);
+  const [listno, setlistno] = useState(1);
+  const [listType, setlistType] = useState("none");
+  const editorRef = useRef(null);
 
   useEffect(() => {
     const loadTabs = async () => {
@@ -55,17 +58,17 @@ function Notepad() {
       setactiveTab(savedActiveTab);
 
       const activeTabData = savedTabs.find(t => t.sno === savedActiveTab);
-      if (activeTabData) setNotes(activeTabData.data || "");
+      if (activeTabData && editorRef.current) {
+        editorRef.current.innerHTML = activeTabData.data || "";
+      }
     };
     loadTabs();
   }, []);
 
-  // Save tabs to storage
   useEffect(() => {
     safeStorageSet("tab", tab);
   }, [tab]);
 
-  // Save activeTab to storage
   useEffect(() => {
     safeStorageSet("activeTab", activeTab);
   }, [activeTab]);
@@ -76,31 +79,30 @@ function Notepad() {
     const newActive = updatedTabs.length ? updatedTabs[0].sno : 1;
     setactiveTab(newActive);
     const activeData = updatedTabs.find(t => t.sno === newActive);
-    setNotes(activeData?.data || "");
+    if (editorRef.current) editorRef.current.innerHTML = activeData?.data || "";
   };
 
   const ontabClick = (sno) => {
     const clicked = tab.find(t => t.sno === sno);
-    if (clicked) {
+    if (clicked && editorRef.current) {
       setactiveTab(sno);
-      setNotes(clicked.data);
+      editorRef.current.innerHTML = clicked.data;
     }
   };
 
-  const displaychange = (e) => {
-    const value = e.target.value;
+  const displaychange = () => {
+    const value = editorRef.current?.innerHTML || "";
     const updatedTabs = tab.map(item =>
       item.sno === activeTab ? { ...item, data: value } : item
     );
     settab(updatedTabs);
-    setNotes(value);
   };
 
   const closeAllTabs = () => {
     const defaultTab = [{ sno: 1, data: "", title: "" }];
     settab(defaultTab);
     setactiveTab(1);
-    setNotes("");
+    if (editorRef.current) editorRef.current.innerHTML = "";
   };
 
   const openAddTabModal = () => {
@@ -115,59 +117,44 @@ function Notepad() {
     }
     const newSno = tab.length ? tab[tab.length - 1].sno + 1 : 1;
     const newTab = { sno: newSno, data: "", title: tabTitle.trim() };
-    const updatedTabs = [...tab, newTab];
-    settab(updatedTabs);
+    settab([...tab, newTab]);
     setactiveTab(newSno);
-    setNotes("");
+    if (editorRef.current) editorRef.current.innerHTML = "";
     setShowAddTabModal(false);
   };
 
-  const upclick = () => {
-    const updated = notes.toUpperCase();
-    setNotes(updated);
-    safeStorageSet("key", updated);
-  };
-
   const downclick = () => {
-    const updated = notes.toLowerCase();
-    setNotes(updated);
+    const updated = editorRef.current.innerText.toLowerCase();
+    editorRef.current.innerText = updated;
     safeStorageSet("key", updated);
   };
 
   const copy = () => {
-    let clipbrd = document.getElementById('textbox');
-    clipbrd.select();
-    navigator.clipboard.writeText(clipbrd.value);
-    document.getSelection().removeAllRanges();
-  };
-
-  const cut = () => {
-    let clipbrd = document.getElementById('textbox');
-    clipbrd.select();
-    navigator.clipboard.writeText(clipbrd.value);
-    document.getSelection().removeAllRanges();
-    setNotes("");
-    safeStorageSet("key", "");
+    const text = editorRef.current?.innerText;
+    navigator.clipboard.writeText(text || "");
   };
 
   const paste = async () => {
     const text = await navigator.clipboard.readText();
-    const combined = notes + text;
-    setNotes(combined);
-    safeStorageSet("key", combined);
+    if (editorRef.current) {
+      editorRef.current.innerHTML += text;
+      safeStorageSet("key", editorRef.current.innerHTML);
+    }
   };
 
   const capital1st = () => {
-    const updated = notes
+    const updated = editorRef.current.innerText
       .split(" ")
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
-    setNotes(updated);
+    editorRef.current.innerText = updated;
     safeStorageSet("key", updated);
   };
 
   const eraseall = () => {
-    setNotes("");
+    if (editorRef.current) editorRef.current.innerHTML = "";
+    setlistno(1);
+    setlistType("none");
     safeStorageSet("key", "");
   };
 
@@ -177,73 +164,119 @@ function Notepad() {
 
   const closemodal = () => {
     setSelect(false);
-    const replaced = notes.split(prevword + " ").join(newword + " ");
-    setNotes(replaced);
+    const replaced = editorRef.current.innerHTML.split(prevword).join(newword);
+    editorRef.current.innerHTML = replaced;
     safeStorageSet("key", replaced);
   };
 
   const fontstylecng = () => {
-    let cards = document.getElementById('cards')
-    setFont(cards.value)
-  }
-  const fontsizecng = () => {
-    let cards2 = document.getElementById('cards2')
-    setSize(cards2.value)
-  }
-  const requestTarunToDownload = () => {
-    // sourced from internet
+    if (font == 'normal') {
+      setFont('italic');
+    } else { setFont('normal'); }
+  };
 
+  const fontsizecng = () => {
+    let cards2 = document.getElementById('cards2');
+    setSize(cards2.value);
+    document.execCommand('fontSize', false, 4);
+  };
+
+  const requestTarunToDownload = () => {
     const link = document.createElement("a");
-    const content = notes;
+    const content = editorRef.current.innerText;
     const file = new Blob([content], { type: 'text/plain' });
     link.href = URL.createObjectURL(file);
     link.download = "sample.txt";
     link.click();
     URL.revokeObjectURL(link.href);
-  }
-
-  const handleResize = () => {
-    window.innerWidth < 768 ? setmobilenav(true) : setmobilenav(false)
   };
 
-  useEffect(() => {
-    handleResize()
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  const onEnterPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+
+      let node = null;
+
+      if (listType === "number") {
+        const br = document.createElement("br");
+        node = document.createTextNode(`${listno}. `);
+        range.insertNode(br);
+        range.collapse(false);
+        range.insertNode(node);
+        setlistno(listno + 1);
+      } else if (listType === "bullet") {
+        const br = document.createElement("br");
+        node = document.createTextNode("• ");
+        range.insertNode(br);
+        range.collapse(false);
+        range.insertNode(node);
+      } else {
+        const br1 = document.createElement("br");
+        const br2 = document.createElement("br");
+        range.insertNode(br2);
+        range.setStartAfter(br2);
+        range.insertNode(br1);
+        range.setStartAfter(br1);
+      }
+
+      // Move cursor after inserted text node if present
+      if (node) {
+        range.setStartAfter(node);
+      }
+
+      // Collapse the selection so it doesn’t highlight
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  };
 
   return (
     <div className='smooth-entry'>
 
       <div className={`flex mt-2 flex-wrap gap-2 justify-center items-center`} >
-        <button title='Capitalise' className="text-center font-bold w-10 border-transparent" onClick={capital1st}>
+
+        <button title='Capitalise' className="text-center font-bold w-8 border-transparent" onClick={capital1st}>
           Aa
         </button>
-        <button title='all small' className="text-center font-bold w-10 border-transparent" onClick={downclick}>
+        <button title='all small' className="text-center font-bold w-8 border-transparent" onClick={downclick}>
           aa
         </button>
-        <button title='delete' className="text-center w-10 border-transparent" onClick={eraseall}>
-          <DeleteIcon />
+        <button style={{ backgroundColor: font == 'italic' ? "grey" : "transparent" }} title='italic' className="text-center italic w-8 border-transparent" onClick={fontstylecng}>
+          <FormatItalicIcon />
         </button>
-        <button title='copy' className="text-center w-10 border-transparent" onClick={copy}>
-          <ContentCopyIcon />
+        <button title='all small' style={{
+          backgroundColor: listType === "bullet" ? "grey" : "transparent"
+        }}
+          className="text-center font-bold w-8 border-transparent" onClick={() => listType !== "bullet" ? setlistType("bullet") : setlistType("none")}>
+          :
         </button>
-        <button title='paste' className="text-center w-10 border-transparent" onClick={paste}>
-          <ContentPasteGoIcon />
-        </button>
-        <button title='replace' className="text-center w-10 border-transparent" onClick={replace}>
-          <PublishedWithChangesIcon />
-        </button>
-        <button title='replace' className="text-center w-16 font-bold border-transparent" onClick={() => setshowtab(!showtab)}>
-          Tabs
+        <button title='all small' style={{
+          backgroundColor: listType === "number" ? "grey" : "transparent"
+        }}
+          className="text-center font-bold w-8 border-transparent" onClick={() => listType !== "number" ? setlistType("number") : setlistType("none")}>
+          1.
         </button>
 
-        <select title='style' id="cards" onChange={fontstylecng} className='select rounded-2xl w-16 focus:outline-none border-transparent'>
-          <option value="normal">normal</option>
-          <option value="italic">Italic</option>
-        </select>
+        <button title='delete' className="text-center w-8 border-transparent" onClick={eraseall}>
+          <DeleteIcon />
+        </button>
+        <button title='copy' className="text-center w-8 border-transparent" onClick={copy}>
+          <ContentCopyIcon />
+        </button>
+        <button title='paste' className="text-center w-8 border-transparent" onClick={paste}>
+          <ContentPasteGoIcon />
+        </button>
+        <button title='replace' className="text-center w-8 border-transparent" onClick={replace}>
+          <PublishedWithChangesIcon />
+        </button>
+
         <select title='font-size' id="cards2" onChange={fontsizecng} className='select rounded-2xl w-16 focus:outline-none border-transparent'>
           <option value="larger">Size</option>
           <option value="larger">normal</option>
@@ -252,7 +285,10 @@ function Notepad() {
           <option value="x-large">large</option>
           <option value="xx-large">larger</option>
         </select>
-        <button title='download as .txt' className="text-center w-10 border-transparent" onClick={requestTarunToDownload}>
+        <button title='replace' className="text-center w-16 font-bold border-transparent" onClick={() => setshowtab(!showtab)}>
+          Tabs
+        </button>
+        <button title='download as .txt' className="text-center w-8 border-transparent" onClick={requestTarunToDownload}>
           <DownloadIcon />
         </button>
       </div>
@@ -280,20 +316,27 @@ function Notepad() {
         {tab.map((item) => (
           <Tabs key={item.sno} tab={tab} activeTab={activeTab} ontabClick={ontabClick} removeTab={removeTab} data={item} />
         ))}
-        <button className='p-2 w-10 font-bold' onClick={openAddTabModal}>+</button>
+        <button className='p-2 w-8 font-bold' onClick={openAddTabModal}>+</button>
         <button className='p-2 w-20' onClick={closeAllTabs}>close all</button>
       </div>}
 
       <div className="flex justify-center items-center p-2">
-        <textarea
-          id='textbox'
-          rows="10" cols="100"
-          value={notes}
-          onChange={displaychange}
-          style={{ fontStyle: font, fontSize: size }}
+        <div
+          ref={editorRef}
+          contentEditable
+          onKeyDown={onEnterPress}
+          onInput={displaychange}
+          style={{
+            fontStyle: font,
+            fontSize: size,
+            minHeight: '62vh',
+            width: '96vw',
+          }}
           placeholder="write something..."
-          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl resize-none m-4 mx-auto p-3 w-[96vw] md:min-h-[60vh] min-h-[62vh] text-lg focus:outline-none"
-        ></textarea>
+          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl m-4 mx-auto p-3 md:min-h-[60vh] text-lg focus:outline-none"
+        >
+
+        </div>
       </div>
       <div className='md:text-base text-xs font-semibold bg-gradient-to-b from-white to-blue-300 px-10 w-full text-start'>words - {notes.split(" ").filter((a) => a != 0).length} and characters - {notes.length}</div>
     </div>
