@@ -251,13 +251,13 @@ function Notepad() {
         <button style={{ backgroundColor: font == 'italic' ? "grey" : "transparent" }} title='italic' className="text-center italic w-8 border-transparent" onClick={fontstylecng}>
           <FormatItalicIcon />
         </button>
-        <button title='all small' style={{
+        <button title='bullets' style={{
           backgroundColor: listType === "bullet" ? "grey" : "transparent"
         }}
           className="text-center font-bold w-8 border-transparent" onClick={() => listType !== "bullet" ? setlistType("bullet") : setlistType("none")}>
           :
         </button>
-        <button title='all small' style={{
+        <button title='number list' style={{
           backgroundColor: listType === "number" ? "grey" : "transparent"
         }}
           className="text-center font-bold w-8 border-transparent" onClick={() => listType !== "number" ? setlistType("number") : setlistType("none")}>

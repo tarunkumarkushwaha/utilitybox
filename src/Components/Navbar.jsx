@@ -26,29 +26,14 @@ const Navbar = () => {
               <li className="list-none">
                 <NavLink to={"/todo"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Todo</NavLink>
               </li>
-              {/* <li className="list-none">
-                <NavLink to={"/tools"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Tools</NavLink>
-              </li> */}
-              {/* <li className="list-none">
-                <NavLink to={"/imagesearch"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Image</NavLink>
-              </li> */}
               <li className="list-none">
                 <NavLink to={"/calculator"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calculator</NavLink>
               </li>
               <li className="list-none">
                 <NavLink to={"/AlarmClock"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calender</NavLink>
               </li>
-              {/* <li className="list-none">
-                <NavLink to={"/clipboard"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Clipboard</NavLink>
-              </li> */}
-              {/* <li className="list-none">
-                <NavLink to={"/currencyconverter"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Currency</NavLink>
-              </li> */}
-              {/* <li className="list-none">
-                <NavLink to={"/weather"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Weather</NavLink>
-              </li> */}
               <li className="list-none">
-                <NavLink to={"/dictionary"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Dictionary</NavLink>
+                <NavLink to={"/tools"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Tools</NavLink>
               </li>
             </ul>
           </nav>

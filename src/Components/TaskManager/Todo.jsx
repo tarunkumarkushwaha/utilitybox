@@ -73,13 +73,9 @@ const Todo = () => {
               }}
             />
             <p className={`font-semibold ${item.completed ? "line-through text-gray-500" : ""}`}>
-              {i + 1}.
+              {i + 1}. <span className="text-lg break-words"> {item.title}</span>
             </p>
           </div>
-
-          <p className={`${item.completed ? "line-through text-gray-500" : ""}`}>
-            <span className="font-semibold">Title:</span> <span className="text-sm break-words">{item.title}</span>
-          </p>
           <p className={`${item.completed ? "line-through text-gray-500" : ""}`}>
             <span className="font-semibold">Details:</span> <span className="text-sm break-words">{item.data}</span>
           </p>
@@ -124,7 +120,7 @@ const Todo = () => {
           onClick={() => dispatch(deletetodo(i))}
           aria-label="Delete"
         >
-          ×
+          X
         </button>
       </div>
 
