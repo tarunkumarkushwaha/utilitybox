@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import functionarray from '../../assets/scripts/script1';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 // import speaker from '../.././assets/images/speaker.png'
 
 const bargraphGenerator = (array, maxValue) => {
@@ -123,6 +124,34 @@ const pieChartGenerator = (input) => {
   );
 };
 
+const jsonMinifier = (input) => {
+  try {
+    const parsed = JSON.parse(input);
+    return (
+      <pre className="text-left text-sm bg-gray-100 p-3 rounded max-w-[90vw] overflow-auto whitespace-pre-wrap">
+        {JSON.stringify(parsed)}
+      </pre>
+    );
+  } catch (err) {
+    return <div className="text-red-600 font-semibold"> Invalid JSON input.</div>;
+  }
+};
+
+
+const jsonFormatter = (input) => {
+  try {
+    const parsed = JSON.parse(input);
+    return (
+      <pre className="text-left text-sm bg-gray-100 p-3 rounded max-w-[90vw] overflow-auto whitespace-pre-wrap">
+        {JSON.stringify(parsed, null, 2)}
+      </pre>
+    );
+  } catch (err) {
+    return <div className="text-red-600 font-semibold">Invalid JSON input.</div>;
+  }
+};
+
+
 
 const searchWord = async (input) => {
   if (input.length) {
@@ -177,6 +206,7 @@ const Tools = () => {
   const [activeFunction, setactiveFunction] = useState(functionarray[0]);
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef(null);
+  const outputRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -232,18 +262,33 @@ const Tools = () => {
   }
 
   const shortCountdownObj = {
-    name: "Short Countdown Timer",
+    name: "Countdown Timer",
     inputs: ["string"],
     function: shortCountdownTimer,
-    description: "Start a short countdown timer (e.g. 00:30:00 for 30 minutes)"
+    description: "Start countdown timer (e.g. 00:30:00 for 30 minutes)"
+  };
+
+  const jsonFormatterObj = {
+    name: "JSON Formatter",
+    inputs: ["string"],
+    function: jsonFormatter,
+    description: "Paste a raw JSON string and get pretty formatted output."
+  };
+
+  const jsonMinifierObj = {
+    name: "JSON Minifier",
+    inputs: ["string"],
+    function: jsonMinifier,
+    description: "Compresses JSON into a single line (no spacing)."
   };
 
 
-  const filteredOptions = [bargraphobj, dictionaryobj, pieChartobj, shortCountdownObj, ...functionarray.filter(option =>
+
+  const filteredOptions = [jsonFormatterObj, bargraphobj, dictionaryobj, jsonMinifierObj, pieChartobj, shortCountdownObj, ...functionarray.filter(option =>
     option.name.toLowerCase().includes(inputValue.toLowerCase())
   )]
 
-  let options = inputValue.toLowerCase().length > 0 ? filteredOptions : [bargraphobj, dictionaryobj, pieChartobj, shortCountdownObj, ...functionarray]
+  let options = inputValue.toLowerCase().length > 0 ? filteredOptions : [jsonFormatterObj, jsonMinifierObj, bargraphobj, dictionaryobj, pieChartobj, shortCountdownObj, ...functionarray]
 
   const handleOptionClick = (options) => {
     setactiveFunction(options)
@@ -297,7 +342,7 @@ const Tools = () => {
             className="w-full px-4 py-2 focus:outline-none rounded-md focus:border-none"
           />
           <div
-            className="px-4 py-2 focus:outline-none hover:border-none cursor-pointer"
+            className={`px-4 py-2 ${showDropdown ? "rotate-180" : ""} transition-all focus:outline-none hover:border-none cursor-pointer`}
             onClick={handleToggleDropdown}
             title='yes, i am that toggle button'
           >
@@ -341,8 +386,44 @@ const Tools = () => {
         <div className="px-4 py-2">
           {activeFunction.description}
         </div>
-        <button onClick={functionHandler} className='bg-white'>Result</button>
-        <div className=' '>{output}</div>
+        <div className='flex justify-center gap-2 items-center'>
+          <button onClick={functionHandler} className='bg-white'>Output</button>
+          {output && <button
+            onClick={() => {
+              setfunctionInput1("");
+              setfunctionInput2("");
+              setoutput("");
+            }}
+            className="bg-white"
+          >
+            Clear
+          </button>}
+        </div>
+
+        <div className="flex flex-col items-center relative">
+          <div ref={outputRef} className="p-2 rounded">
+            {output}
+          </div>
+          {output && <button
+            title='copy'
+            className="p-1 h-8 w-8 bg-slate-400 absolute right-5 -bottom-8 text-white rounded hover:bg-slate-600"
+            onClick={() => {
+              if (outputRef.current) {
+                const range = document.createRange();
+                range.selectNodeContents(outputRef.current);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                document.execCommand("copy");
+                sel.removeAllRanges();
+                alert("Copied to clipboard!");
+              }
+            }}
+          >
+            <ContentCopyIcon />
+          </button>}
+        </div>
+
       </div>
 
     </div>
