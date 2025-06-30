@@ -1,8 +1,39 @@
 console.log("Background script loaded");
 
 let alarmTimeout = null;
+let shortTimer = null;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+  if (request.type === "SET_SHORT_TIMER") {
+    const { hours, minutes, seconds } = request.data;
+    const duration = (hours * 3600 + minutes * 60 + seconds) * 1000;
+
+    if (shortTimer) clearTimeout(shortTimer);
+
+    shortTimer = setTimeout(() => {
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: "favicon-32x32.png",
+        title: "Timer Complete!",
+        message: `Your ${hours}h ${minutes}m ${seconds}s timer has ended.`,
+        priority: 2
+      });
+
+      chrome.storage.local.set({ shortTimerDone: true });
+    }, duration);
+
+    sendResponse({ status: "Short timer set" });
+    return true;
+  }
+
+  if (request.type === "CLEAR_SHORT_TIMER") {
+    if (shortTimer) clearTimeout(shortTimer);
+    sendResponse({ status: "Short timer cleared" });
+    return true;
+  }
+
+
   if (request.type === "SET_ALARM") {
     const { hr, min, sec, ampm } = request.data;
     const text = request.text;

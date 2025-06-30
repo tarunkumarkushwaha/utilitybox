@@ -225,12 +225,10 @@ function Notepad() {
         range.setStartAfter(br1);
       }
 
-      // Move cursor after inserted text node if present
       if (node) {
         range.setStartAfter(node);
       }
 
-      // Collapse the selection so it doesn’t highlight
       range.collapse(true);
       selection.removeAllRanges();
       selection.addRange(range);

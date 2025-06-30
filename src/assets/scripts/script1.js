@@ -1,27 +1,38 @@
 
 const agecalculator = (bday) => {
-  let startdate = new Date(bday.split("-").reverse().join("-"))
-  let currentdate = new Date()
-  let timeDifference = currentdate - startdate;
-
-  if (isNaN(startdate)) {
-    alert("dates are invalid")
+  if (!bday || typeof bday !== "string" || !bday.includes("-")) {
+    throw new Error("Please provide date in format dd-mm-yyyy");
   }
-  let daysDifference = timeDifference / (1000 * 60 * 60 * 24 * 365);
-  return Math.floor(daysDifference)
-}
+
+  const startdate = new Date(bday.split("-").reverse().join("-"));
+  const currentdate = new Date();
+
+  if (isNaN(startdate.getTime())) {
+    throw new Error("Invalid date format");
+  }
+
+  const timeDifference = currentdate - startdate;
+  const years = timeDifference / (1000 * 60 * 60 * 24 * 365);
+  return Math.floor(years);
+};
 
 const daysBetweenDates = (day1, day2) => {
-  let startdate = new Date(day1.split("-").reverse().join("-"))
-  let enddate = new Date(day2.split("-").reverse().join("-"))
-  let timeDifference = enddate - startdate;
-
-  if (isNaN(startdate) || isNaN(enddate)) {
-    alert("dates are invalid")
+  if (!day1 || !day2 || !day1.includes("-") || !day2.includes("-")) {
+    throw new Error("Both dates must be in dd-mm-yyyy format");
   }
-  let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return daysDifference
-}
+
+  const startdate = new Date(day1.split("-").reverse().join("-"));
+  const enddate = new Date(day2.split("-").reverse().join("-"));
+
+  if (isNaN(startdate.getTime()) || isNaN(enddate.getTime())) {
+    throw new Error("Invalid date(s)");
+  }
+
+  const timeDifference = enddate - startdate;
+  const days = timeDifference / (1000 * 60 * 60 * 24);
+  return Math.floor(days);
+};
+
 
 const hexcolgen = () => {
   let color = "#"
@@ -51,7 +62,7 @@ const functionarray = [
   //   description: ""
   // },
   {
-    name: "random color generator",
+    name: "Random color generator",
     inputs: ["string"],
     function: hexcolgen,
     description: "Generates a random hex color code."

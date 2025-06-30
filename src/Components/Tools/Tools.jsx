@@ -3,9 +3,14 @@ import functionarray from '../../assets/scripts/script1';
 // import speaker from '../.././assets/images/speaker.png'
 
 const bargraphGenerator = (array, maxValue) => {
-  const numarray = array.split(',').map(item => parseInt(item))
+  const numArray = array.split(',').map(item => {
+    if (isNaN(item.trim())) throw new Error(`Invalid number: "${item}"`);
+    return parseInt(item);
+  });
+
+  if (!maxValue || isNaN(maxValue)) throw new Error("Invalid max value");
   return <div className="flex justify-center items-center">
-    {numarray.map((value, i) => {
+    {numArray.map((value, i) => {
       return <div key={i} className="relative w-20 bg-gray-200 h-64 p-4  flex items-end">
         <div className="bg-sky-600 w-full rounded-md" style={{ height: `${(value / maxValue) * 100}%` }}></div>
         <span className="mt-2 text-sm border-b-2 border-blue-800">{value}</span>
@@ -13,6 +18,111 @@ const bargraphGenerator = (array, maxValue) => {
     })}
   </div>
 };
+
+const shortCountdownTimer = (inputStr) => {
+  const parts = inputStr.split(":");
+  if (parts.length !== 3) {
+    alert("Time must be in HH:MM:SS format");
+    return;
+  }
+
+  const [h, m, s] = parts.map((n) => parseInt(n.trim()));
+  if ([h, m, s].some(isNaN)) {
+    alert("Invalid numbers");
+    return;
+  }
+
+  chrome.runtime.sendMessage({
+    type: "SET_SHORT_TIMER",
+    data: {
+      hours: h,
+      minutes: m,
+      seconds: s
+    }
+  }, (response) => {
+    if (response?.status) {
+      alert("timer started");
+    }
+  });
+};
+
+
+
+const hexcolgen = () => {
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += Math.floor(Math.random() * 16).toString(16);
+  }
+  return color;
+};
+
+
+const pieChartGenerator = (input) => {
+  const data = input.split(',').map(entry => {
+    const [label, val] = entry.split(':');
+    if (!label || val === undefined || isNaN(val.trim())) {
+      throw new Error(`Invalid entry or wrong format: "${entry}"`);
+    }
+    return {
+      label: label.trim(),
+      value: parseInt(val.trim()),
+      color: hexcolgen()
+    };
+  });
+  if (data.length === 0) throw new Error("No valid input provided.");
+
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  let cumulativePercent = 0;
+
+  const getCoordinatesForPercent = (percent) => {
+    const x = Math.cos(2 * Math.PI * percent);
+    const y = Math.sin(2 * Math.PI * percent);
+    return [x, y];
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4 my-6">
+      <svg width="200" height="200" viewBox="-1 -1 2 2" className="transform -rotate-90">
+        {data.map((item, i) => {
+          const percent = item.value / total;
+          const [startX, startY] = getCoordinatesForPercent(cumulativePercent);
+          cumulativePercent += percent;
+          const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
+          const largeArcFlag = percent > 0.5 ? 1 : 0;
+
+          const pathData = `
+            M ${startX} ${startY}
+            A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}
+            L 0 0
+          `;
+
+          return (
+            <path
+              key={i}
+              d={pathData}
+              fill={item.color}
+              stroke="white"
+              strokeWidth="0.01"
+            />
+          );
+        })}
+      </svg>
+
+      <div className="flex flex-wrap justify-center gap-4">
+        {data.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: item.color }}></div>
+            <span className="text-sm">
+              {item.label}: {item.value}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 const searchWord = async (input) => {
   if (input.length) {
@@ -27,7 +137,7 @@ const searchWord = async (input) => {
       <div className={` ${Result ? "flex" : "hidden"} flex-col justify-center items-center`}>
 
         {
-          Result && Result.message ? <div className='flex flex-col justify-center items-center overflow-scroll'>
+          Result && Result.message ? <div className='flex flex-col justify-center items-center overflow-y-scroll'>
             <h1>{Result.title}</h1>
             <div>{Result.message}</div>
             <div>{Result.resolution}</div>
@@ -107,6 +217,12 @@ const Tools = () => {
     function: bargraphGenerator,
     description: "Generates bargraph given maxvalue and data seperated by , "
   }
+  const pieChartobj = {
+    name: "Pie chart Generator",
+    inputs: ["string"],
+    function: pieChartGenerator,
+    description: "Give inputs as this format - john:45, joe:45, tiff:90"
+  }
 
   const dictionaryobj = {
     name: "Dictionary",
@@ -115,11 +231,19 @@ const Tools = () => {
     description: "Search words"
   }
 
-  const filteredOptions = [bargraphobj, dictionaryobj, ...functionarray.filter(option =>
+  const shortCountdownObj = {
+    name: "Short Countdown Timer",
+    inputs: ["string"],
+    function: shortCountdownTimer,
+    description: "Start a short countdown timer (e.g. 00:30:00 for 30 minutes)"
+  };
+
+
+  const filteredOptions = [bargraphobj, dictionaryobj, pieChartobj, shortCountdownObj, ...functionarray.filter(option =>
     option.name.toLowerCase().includes(inputValue.toLowerCase())
   )]
 
-  let options = inputValue.toLowerCase().length > 0 ? filteredOptions : [bargraphobj, dictionaryobj, ...functionarray]
+  let options = inputValue.toLowerCase().length > 0 ? filteredOptions : [bargraphobj, dictionaryobj, pieChartobj, shortCountdownObj, ...functionarray]
 
   const handleOptionClick = (options) => {
     setactiveFunction(options)
@@ -128,35 +252,37 @@ const Tools = () => {
   };
 
   const functionHandler = async () => {
-    let result = ""
-    if (activeFunction.inputs[0] == "string") {
-      result = await activeFunction.function(functionInput1)
-      if (typeof result == "boolean" && result == true) {
-        result = "yes"
-      } else if (typeof result == "boolean" && result == false) { result = "no" }
+    let result = "";
+    try {
+      const isStringInput = activeFunction.inputs[0] === "string";
+      const isNumberInput = activeFunction.inputs[0] === "number";
+      const isNumArray = activeFunction.inputs[0] === "num array";
+      const isTwoInputs = activeFunction.inputs.length === 2;
+
+      if (isStringInput) {
+        result = await activeFunction.function(functionInput1);
+      } else if (isNumberInput) {
+        result = await activeFunction.function(parseInt(functionInput1));
+      } else if (isNumArray) {
+        const arr = functionInput1.split(',').map((item) => {
+          if (isNaN(item.trim())) throw new Error(`Invalid number: "${item}"`);
+          return parseInt(item);
+        });
+        result = await activeFunction.function(arr);
+      } else if (isTwoInputs) {
+        result = await activeFunction.function(functionInput1, functionInput2);
+      } else {
+        result = "function under construction";
+      }
+
+      if (typeof result === "boolean") result = result ? "yes" : "no";
+      setoutput(result);
+
+    } catch (err) {
+      setoutput(<div className="text-red-600 font-semibold">Error: {err.message}</div>);
     }
-    else if (activeFunction.inputs[0] == "number") {
-      result = await activeFunction.function(parseInt(functionInput1))
-      if (typeof result == "boolean" && result == true) {
-        result = "yes"
-      } else if (typeof result == "boolean" && result == false) { result = "no" }
-    }
-    else if (activeFunction.inputs[0] == "num array") {
-      result = await activeFunction.function(functionInput1.split(',').map((item => parseInt(item))))
-      if (typeof result == "boolean" && result == true) {
-        result = "yes"
-      } else if (typeof result == "boolean" && result == false) { result = "no" }
-    }
-    else if (activeFunction.inputs.length == 2) {
-      result = await activeFunction.function(functionInput1, functionInput2)
-      if (typeof result == "boolean" && result == true) {
-        result = "yes"
-      } else if (typeof result == "boolean" && result == false) { result = "no" }
-    }
-    else { result = "function under construction" }
-    setoutput(result);
-    // setfunctionInput1('')
-  }
+  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-300 w-full smooth-entry">
@@ -166,12 +292,14 @@ const Tools = () => {
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder={functionarray[0].name}
+            // defaultValue={functionarray[0].name}
+            placeholder={"search tools or select by button"}
             className="w-full px-4 py-2 focus:outline-none rounded-md focus:border-none"
           />
           <div
             className="px-4 py-2 focus:outline-none hover:border-none cursor-pointer"
             onClick={handleToggleDropdown}
+            title='yes, i am that toggle button'
           >
             &#9660;
           </div>
