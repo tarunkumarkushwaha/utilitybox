@@ -193,6 +193,16 @@ const ColorPicker = () => {
                 </div>
             )}
 
+            <button
+                    onClick={()=>{
+                      setColorHistory([]); 
+                      safeStorageSet("colorHistory", []); 
+                    }}
+                    className="flex-1 m-3 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 transition"
+                >
+                    Clear
+                </button>
+
         </div>
     );
 };
