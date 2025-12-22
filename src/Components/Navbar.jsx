@@ -33,8 +33,14 @@ const Navbar = () => {
                 <NavLink to={"/todo"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Todo</NavLink>
               </li>
               <li className="list-none">
-                <NavLink to={"/calculator"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calculator</NavLink>
+                <NavLink to={"/colorpicker"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Color picker</NavLink>
               </li>             
+              <li className="list-none">
+                <NavLink to={"/regex"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Regex</NavLink>
+              </li>             
+              {/* <li className="list-none">
+                <NavLink to={"/calculator"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calculator</NavLink>
+              </li>              */}
             </ul>
           </nav>
         }

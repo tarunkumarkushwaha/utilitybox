@@ -11,6 +11,8 @@ import Tools from "./Components/Tools/Tools";
 import Notepad from "./Components/Notepad/Notepad";
 import AlarmClock from "./Components/AlarmClock";
 import Navbar from "./Components/Navbar";
+import ColorPicker from "./Components/ColorPicker";
+import RegexTester from "./Components/RegexTester";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Routes>
           <Route path="/" element={<><Navbar /><Notepad /></>} />
           <Route path="/calculator" element={<><Navbar /><Calculator /></>} />
+          <Route path="/colorpicker" element={<><Navbar /><ColorPicker/></>} />
+          <Route path="/regex" element={<><Navbar /><RegexTester/></>} />
           <Route path="/todo" element={<><Navbar /><Todo /></>} />
           <Route path="/alarmclock" element={<><Navbar /><AlarmClock /></>} />
           <Route path="/tools" element={<><Navbar /><Tools /></>} />
