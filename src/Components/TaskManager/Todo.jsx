@@ -16,6 +16,25 @@ const Todo = () => {
   });
   const [taskModal, settaskModal] = useState(false)
 
+  const isChromeExtension = () =>
+    typeof chrome !== "undefined" && chrome.storage?.local;
+
+  const safeStorageSet = (key, value) => {
+    if (isChromeExtension()) {
+      chrome.storage.local.set({ [key]: value });
+    }
+  };
+
+  const safeStorageGet = async (key) => {
+    return new Promise((resolve) => {
+      if (isChromeExtension()) {
+        chrome.storage.local.get([key], (result) => resolve(result[key]));
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
   const todo = useSelector((state) => state.TODO)
 
   const dispatch = useDispatch()
@@ -37,7 +56,8 @@ const Todo = () => {
       completed: false,
       priority: "low"
     });
-    localStorage.setItem("items", JSON.stringify(todo))
+    // localStorage.setItem("items", JSON.stringify(todo))
+    safeStorageSet("items", todo);
   }
 
   const onEnterPress = (e) => {
@@ -48,7 +68,8 @@ const Todo = () => {
   }
 
   useEffect(() => {
-    localStorage.setItem('items', JSON.stringify(todo));
+    // localStorage.setItem('items', JSON.stringify(todo));
+    safeStorageSet("items", todo);
   }, [todo]);
 
   const Todo = ({ item, i }) => {

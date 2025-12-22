@@ -46,7 +46,7 @@ const AddTaskModal = ({ item, setItem, onConfirm, onClose }) => {
         <select name="priority" id="priority"
           className='select rounded-2xl w-full focus:outline-none border-transparent'
           value={item.priority || "low"}
-          defaultValue={"low"}
+          // defaultValue={"low"}
           onChange={(e) => {
             setItem({ ...item, priority: e.target.value });
           }}
