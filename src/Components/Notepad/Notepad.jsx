@@ -184,57 +184,63 @@ function Notepad() {
   };
 
   const requestTarunToDownload = () => {
+    const active = tab.find(t => t.sno === activeTab);
+    if (!active) return;
+
+    const content = active.data || "";
+    const blob = new Blob([content], { type: "text/plain" });
+
     const link = document.createElement("a");
-    const content = editorRef.current.innerText;
-    const file = new Blob([content], { type: 'text/plain' });
-    link.href = URL.createObjectURL(file);
-    link.download = "sample.txt";
+    link.href = URL.createObjectURL(blob);
+    link.download = `${active.title || "note"}.txt`;
+
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+
     URL.revokeObjectURL(link.href);
   };
 
+
   const onEnterPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+    if (e.key !== "Enter" || e.shiftKey) return;
 
-      const selection = window.getSelection();
-      if (!selection.rangeCount) return;
+    e.preventDefault();
 
-      const range = selection.getRangeAt(0);
-      range.deleteContents();
+    const textarea = e.target;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
 
-      let node = null;
+    const active = tab.find(t => t.sno === activeTab);
+    if (!active) return;
 
-      if (listType === "number") {
-        const br = document.createElement("br");
-        node = document.createTextNode(`${listno}. `);
-        range.insertNode(br);
-        range.collapse(false);
-        range.insertNode(node);
-        setlistno(listno + 1);
-      } else if (listType === "bullet") {
-        const br = document.createElement("br");
-        node = document.createTextNode("• ");
-        range.insertNode(br);
-        range.collapse(false);
-        range.insertNode(node);
-      } else {
-        const br1 = document.createElement("br");
-        const br2 = document.createElement("br");
-        range.insertNode(br2);
-        range.setStartAfter(br2);
-        range.insertNode(br1);
-        range.setStartAfter(br1);
-      }
+    let insertText = "\n";
 
-      if (node) {
-        range.setStartAfter(node);
-      }
-
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
+    if (listType === "number") {
+      insertText = `\n${listno}. `;
+      setlistno(prev => prev + 1);
     }
+    else if (listType === "bullet") {
+      insertText = `\n• `;
+    }
+
+    const updatedText =
+      active.data.slice(0, start) +
+      insertText +
+      active.data.slice(end);
+
+    // Update state
+    settab(prev =>
+      prev.map(t =>
+        t.sno === activeTab ? { ...t, data: updatedText } : t
+      )
+    );
+
+    // Restore cursor position (VERY important)
+    requestAnimationFrame(() => {
+      textarea.selectionStart = textarea.selectionEnd =
+        start + insertText.length;
+    });
   };
 
   return (
