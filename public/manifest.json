@@ -20,7 +20,9 @@
     "storage",
     "notifications",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "clipboardRead",
+    "clipboardWrite"
   ],
   "host_permissions": [
     "<all_urls>"
