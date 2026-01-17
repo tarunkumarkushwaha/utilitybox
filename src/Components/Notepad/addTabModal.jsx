@@ -10,7 +10,10 @@ const AddTabModal = ({ tabTitle, setTabTitle, onConfirm, onClose }) => {
           className="w-full text-center border border-black h-10 rounded-xl mb-4 px-2 focus:outline-none"
           placeholder="Enter tab title"
           value={tabTitle}
-          onChange={(e) => setTabTitle(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.length < 7) { setTabTitle(e.target.value) }
+            else { setTabTitle(e.target.value.substring(0, 6)) }
+          }}
         />
         <div className="flex justify-center gap-2">
           <button

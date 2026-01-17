@@ -1,40 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import Replacemodal from './Replacemodal'
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
-import ContentCutIcon from '@mui/icons-material/ContentCut';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import UseAnimation from '../../customhooks/TarunAnimation';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
-import { json } from 'react-router-dom';
 import Tabs from './Tabs';
 import AddTabModal from './addTabModal';
-
-const isChromeExtension = () =>
-  typeof chrome !== "undefined" && chrome.storage?.local;
-
-const safeStorageSet = (key, value) => {
-  if (isChromeExtension()) {
-    chrome.storage.local.set({ [key]: value });
-  }
-};
-
-const safeStorageGet = async (key) => {
-  return new Promise((resolve) => {
-    if (isChromeExtension()) {
-      chrome.storage.local.get([key], (result) => resolve(result[key]));
-    } else {
-      resolve(null); // fallback for local dev
-    }
-  });
-};
+import { safeStorageGet, safeStorageSet } from "../../utils/safeStorage";
 
 function Notepad() {
-
-  // states 
   const [notes, setNotes] = useState("");
   const [select, setSelect] = useState(false);
   const [showAddTabModal, setShowAddTabModal] = useState(false);
@@ -44,11 +21,14 @@ function Notepad() {
   const [font, setFont] = useState("normal");
   const [size, setSize] = useState("larger");
   const [showtab, setshowtab] = useState(false);
-  const [tab, settab] = useState([{ sno: 1, data: "", title: "" }]);
+  // const [tab, settab] = useState([{ sno: 1, data: "", title: "" }]);
   const [activeTab, setactiveTab] = useState(1);
   const [listno, setlistno] = useState(1);
   const [listType, setlistType] = useState("none");
-  const editorRef = useRef(null);
+  const [tab, settab] = useState([
+    { sno: 1, data: "", title: "" }
+  ]);
+
 
   useEffect(() => {
     const loadTabs = async () => {
@@ -57,17 +37,10 @@ function Notepad() {
       settab(savedTabs);
       setactiveTab(savedActiveTab);
 
-      const activeTabData = savedTabs.find(t => t.sno === savedActiveTab);
-      if (activeTabData && editorRef.current) {
-        editorRef.current.innerHTML = activeTabData.data || "";
-      }
+      // const activeTabData = savedTabs.find(t => t.sno === savedActiveTab);
     };
     loadTabs();
   }, []);
-
-  useEffect(() => {
-    safeStorageSet("tab", tab);
-  }, [tab]);
 
   useEffect(() => {
     safeStorageSet("activeTab", activeTab);
@@ -75,34 +48,24 @@ function Notepad() {
 
   const removeTab = (sno) => {
     const updatedTabs = tab.filter(t => t.sno !== sno);
+    const newActive = updatedTabs[0]?.sno || 1;
+
     settab(updatedTabs);
-    const newActive = updatedTabs.length ? updatedTabs[0].sno : 1;
     setactiveTab(newActive);
-    const activeData = updatedTabs.find(t => t.sno === newActive);
-    if (editorRef.current) editorRef.current.innerHTML = activeData?.data || "";
   };
 
   const ontabClick = (sno) => {
-    const clicked = tab.find(t => t.sno === sno);
-    if (clicked && editorRef.current) {
-      setactiveTab(sno);
-      editorRef.current.innerHTML = clicked.data;
-    }
+    if (sno === activeTab) return;
+    // saveActiveTabData();
+    setactiveTab(sno);
   };
 
-  const displaychange = () => {
-    const value = editorRef.current?.innerHTML || "";
-    const updatedTabs = tab.map(item =>
-      item.sno === activeTab ? { ...item, data: value } : item
-    );
-    settab(updatedTabs);
-  };
+
 
   const closeAllTabs = () => {
     const defaultTab = [{ sno: 1, data: "", title: "" }];
     settab(defaultTab);
     setactiveTab(1);
-    if (editorRef.current) editorRef.current.innerHTML = "";
   };
 
   const openAddTabModal = () => {
@@ -115,13 +78,28 @@ function Notepad() {
       alert("Please enter a title.");
       return;
     }
+
     const newSno = tab.length ? tab[tab.length - 1].sno + 1 : 1;
     const newTab = { sno: newSno, data: "", title: tabTitle.trim() };
-    settab([...tab, newTab]);
+
+    settab(prev => [...prev, newTab]);
     setactiveTab(newSno);
-    if (editorRef.current) editorRef.current.innerHTML = "";
+
+    // if (editorRef.current) editorRef.current.innerHTML = "";
     setShowAddTabModal(false);
   };
+
+  const saveTimeout = useRef(null);
+
+  useEffect(() => {
+    clearTimeout(saveTimeout.current);
+
+    saveTimeout.current = setTimeout(() => {
+      safeStorageSet("tab", tab);
+    }, 300);
+
+    return () => clearTimeout(saveTimeout.current);
+  }, [tab]);
 
   const downclick = () => {
     const updated = editorRef.current.innerText.toLowerCase();
@@ -319,22 +297,27 @@ function Notepad() {
       </div>}
 
       <div className="flex justify-center items-center p-2">
-        <div
-          ref={editorRef}
-          contentEditable
+        <textarea
+          value={tab.find(t => t.sno === activeTab)?.data || ""}
+          onChange={(e) => {
+            const value = e.target.value;
+            settab(prev =>
+              prev.map(t =>
+                t.sno === activeTab ? { ...t, data: value } : t
+              )
+            );
+          }}
           onKeyDown={onEnterPress}
-          onInput={displaychange}
+          placeholder="write something..."
           style={{
             fontStyle: font,
             fontSize: size,
-            minHeight: '62vh',
-            width: '96vw',
+            minHeight: "62vh",
+            width: "96vw",
           }}
-          placeholder="write something..."
-          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl m-4 mx-auto p-3 md:min-h-[60vh] text-lg focus:outline-none"
-        >
+          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl m-4 mx-auto p-3 md:min-h-[60vh] text-lg focus:outline-none resize-none"
+        />
 
-        </div>
       </div>
       <div className='md:text-base text-xs font-semibold bg-gradient-to-b from-white to-blue-300 px-10 w-full text-start'>words - {notes.split(" ").filter((a) => a != 0).length} and characters - {notes.length}</div>
     </div>

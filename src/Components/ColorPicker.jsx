@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { safeStorageGet, safeStorageSet } from "../utils/safeStorage";
 
 const ColorPicker = () => {
     const [hex, setHex] = useState("#1f2937");
@@ -6,28 +7,6 @@ const ColorPicker = () => {
     const [hsl, setHsl] = useState("hsl(215, 28%, 17%)");
     const [copied, setCopied] = useState("");
     const [colorHistory, setColorHistory] = useState([]);
-
-
-    const isChromeExtension = () =>
-        typeof chrome !== "undefined" && chrome.storage?.local;
-
-    const safeStorageSet = (key, value) => {
-        if (isChromeExtension()) {
-            chrome.storage.local.set({ [key]: value });
-        }
-    };
-
-    const safeStorageGet = async (key) => {
-        return new Promise((resolve) => {
-            if (isChromeExtension()) {
-                chrome.storage.local.get([key], (result) => resolve(result[key]));
-            } else {
-                resolve(null);
-            }
-        });
-    };
-
-
 
     const pickColor = async () => {
         if (!window.EyeDropper) {
@@ -193,15 +172,15 @@ const ColorPicker = () => {
                 </div>
             )}
 
-            <button
-                    onClick={()=>{
-                      setColorHistory([]); 
-                      safeStorageSet("colorHistory", []); 
-                    }}
-                    className="flex-1 m-3 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 transition"
-                >
-                    Clear
-                </button>
+            {colorHistory.length > 0 && <button
+                onClick={() => {
+                    setColorHistory([]);
+                    safeStorageSet("colorHistory", []);
+                }}
+                className="flex-1 m-3 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 transition"
+            >
+                Clear
+            </button>}
 
         </div>
     );

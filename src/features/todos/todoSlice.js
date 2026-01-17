@@ -1,23 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const isChromeExtension = () =>
-  typeof chrome !== "undefined" && chrome.storage?.local;
-
-const safeStorageSet = (key, value) => {
-  if (isChromeExtension()) {
-    chrome.storage.local.set({ [key]: value });
-  }
-};
-
-const safeStorageGet = (key) => {
-  return new Promise((resolve) => {
-    if (isChromeExtension()) {
-      chrome.storage.local.get([key], (result) => resolve(result[key]));
-    } else {
-      resolve(null);
-    }
-  });
-};
+import { safeStorageGet } from "../../utils/safeStorage";
 
 
 export const loadTodos = createAsyncThunk(
@@ -38,16 +20,13 @@ export const todoSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       state.unshift(action.payload);
-      safeStorageSet("items", JSON.stringify(state));
     },
 
     deletetodo: (state, action) => {
       state.splice(action.payload, 1);
-      safeStorageSet("items", JSON.stringify(state));
     },
 
     deleteall: () => {
-      safeStorageSet("items", JSON.stringify([]));
       return [];
     },
 
@@ -58,8 +37,6 @@ export const todoSlice = createSlice({
         ...rest,
         completed: check,
       };
-
-      safeStorageSet("items", JSON.stringify(state));
     },
   },
 

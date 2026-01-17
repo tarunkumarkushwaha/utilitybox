@@ -1,12 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import Logo from '../assets/images/image.png';
-import MenuIcon from '@mui/icons-material/Menu';
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import Logo from "../assets/images/image.png";
+import MenuIcon from "@mui/icons-material/Menu";
+import { safeStorageGet, safeStorageSet } from "../utils/safeStorage";
+
+const LAST_ROUTE_KEY = "lastSelectedRoute";
 
 const Navbar = () => {
   const [nav, setnav] = useState(false)
 
   const togglenav = () => { setnav(!nav) }
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const restoreRoute = async () => {
+      const savedHash = await safeStorageGet(LAST_ROUTE_KEY);
+
+      if (
+        savedHash &&
+        savedHash !== location.hash &&
+        savedHash.startsWith("#/")
+      ) {
+        navigate(savedHash.replace("#", ""), { replace: true });
+      }
+    };
+
+    restoreRoute();
+  }, []);
+
+  useEffect(() => {
+    if (location.hash) {
+      safeStorageSet(LAST_ROUTE_KEY, location.hash);
+    }
+  }, [location.hash]);
 
   return (
     <>
@@ -29,15 +57,15 @@ const Navbar = () => {
               <li className="list-none">
                 <NavLink to={"/AlarmClock"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calender</NavLink>
               </li>
-              {/* <li className="list-none">
+              <li className="list-none">
                 <NavLink to={"/todo"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Todo</NavLink>
-              </li> */}
+              </li>
               <li className="list-none">
                 <NavLink to={"/colorpicker"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Color picker</NavLink>
-              </li>             
+              </li>
               <li className="list-none">
                 <NavLink to={"/regex"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Regex</NavLink>
-              </li>             
+              </li>
               {/* <li className="list-none">
                 <NavLink to={"/calculator"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calculator</NavLink>
               </li>              */}
