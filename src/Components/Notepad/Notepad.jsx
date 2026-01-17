@@ -101,51 +101,75 @@ function Notepad() {
     return () => clearTimeout(saveTimeout.current);
   }, [tab]);
 
-  const downclick = () => {
-    const updated = editorRef.current.innerText.toLowerCase();
-    editorRef.current.innerText = updated;
-    safeStorageSet("key", updated);
+  const updateActiveTabText = (newText) => {
+    settab(prev =>
+      prev.map(t =>
+        t.sno === activeTab ? { ...t, data: newText } : t
+      )
+    );
   };
+
+
+  const downclick = () => {
+    const active = tab.find(t => t.sno === activeTab);
+    if (!active) return;
+    updateActiveTabText(active.data.toLowerCase());
+  };
+
 
   const copy = () => {
-    const text = editorRef.current?.innerText;
-    navigator.clipboard.writeText(text || "");
+    const active = tab.find(t => t.sno === activeTab);
+    navigator.clipboard.writeText(active?.data || "");
   };
+
 
   const paste = async () => {
-    const text = await navigator.clipboard.readText();
-    if (editorRef.current) {
-      editorRef.current.innerHTML += text;
-      safeStorageSet("key", editorRef.current.innerHTML);
-    }
+    const clipText = await navigator.clipboard.readText();
+    const active = tab.find(t => t.sno === activeTab);
+
+    if (!active) return;
+
+    updateActiveTabText(active.data + clipText);
   };
+
 
   const capital1st = () => {
-    const updated = editorRef.current.innerText
+    const active = tab.find(t => t.sno === activeTab);
+    if (!active) return;
+
+    const updated = active.data
       .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map(word =>
+        word ? word[0].toUpperCase() + word.slice(1).toLowerCase() : ""
+      )
       .join(" ");
-    editorRef.current.innerText = updated;
-    safeStorageSet("key", updated);
+
+    updateActiveTabText(updated);
   };
+
 
   const eraseall = () => {
-    if (editorRef.current) editorRef.current.innerHTML = "";
+    updateActiveTabText("");
     setlistno(1);
     setlistType("none");
-    safeStorageSet("key", "");
   };
+
 
   const replace = () => {
-    setSelect(!select);
+    setSelect(prev => !prev);
   };
 
+
   const closemodal = () => {
+    const active = tab.find(t => t.sno === activeTab);
+    if (!active) return;
+
+    const replaced = active.data.split(prevword).join(newword);
+
+    updateActiveTabText(replaced);
     setSelect(false);
-    const replaced = editorRef.current.innerHTML.split(prevword).join(newword);
-    editorRef.current.innerHTML = replaced;
-    safeStorageSet("key", replaced);
   };
+
 
   const fontstylecng = () => {
     if (font == 'normal') {
@@ -299,14 +323,7 @@ function Notepad() {
       <div className="flex justify-center items-center p-2">
         <textarea
           value={tab.find(t => t.sno === activeTab)?.data || ""}
-          onChange={(e) => {
-            const value = e.target.value;
-            settab(prev =>
-              prev.map(t =>
-                t.sno === activeTab ? { ...t, data: value } : t
-              )
-            );
-          }}
+          onChange={(e) => updateActiveTabText(e.target.value)}
           onKeyDown={onEnterPress}
           placeholder="write something..."
           style={{
