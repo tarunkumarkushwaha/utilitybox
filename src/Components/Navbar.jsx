@@ -7,7 +7,8 @@ import { safeStorageGet, safeStorageSet } from "../utils/safeStorage";
 const LAST_ROUTE_KEY = "lastSelectedRoute";
 
 const Navbar = () => {
-  const [nav, setnav] = useState(false)
+  const [nav, setnav] = useState(true);
+  const [restored, setRestored] = useState(false);
 
   const togglenav = () => { setnav(!nav) }
 
@@ -16,25 +17,27 @@ const Navbar = () => {
 
   useEffect(() => {
     const restoreRoute = async () => {
-      const savedHash = await safeStorageGet(LAST_ROUTE_KEY);
+      const savedPath = await safeStorageGet(LAST_ROUTE_KEY);
 
-      if (
-        savedHash &&
-        savedHash !== location.hash &&
-        savedHash.startsWith("#/")
-      ) {
-        navigate(savedHash.replace("#", ""), { replace: true });
+      if (savedPath && savedPath !== location.pathname) {
+        navigate(savedPath, { replace: true });
       }
+
+      setRestored(true);
     };
 
     restoreRoute();
   }, []);
 
+
+  // console.log(location, "location")
+
   useEffect(() => {
-    if (location.hash) {
-      safeStorageSet(LAST_ROUTE_KEY, location.hash);
-    }
-  }, [location.hash]);
+    if (!restored) return;
+
+    safeStorageSet(LAST_ROUTE_KEY, location.pathname);
+  }, [location.pathname, restored]);
+
 
   return (
     <>
@@ -66,9 +69,6 @@ const Navbar = () => {
               <li className="list-none">
                 <NavLink to={"/regex"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Regex</NavLink>
               </li>
-              {/* <li className="list-none">
-                <NavLink to={"/calculator"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calculator</NavLink>
-              </li>              */}
             </ul>
           </nav>
         }

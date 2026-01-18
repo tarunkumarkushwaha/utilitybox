@@ -4,6 +4,7 @@ import { addTodo, deleteall } from "../../features/todos/todoSlice";
 import { deletetodo } from '../../features/todos/todoSlice'
 import { modTodo } from "../../features/todos/todoSlice";
 import AddTaskModal from "./addTaskModal";
+import { loadTodos } from "../../features/todos/todoSlice";
 
 const Todo = () => {
   const [item, setItem] = useState({
@@ -20,6 +21,10 @@ const Todo = () => {
   const todo = useSelector((state) => state.TODO)
 
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(loadTodos());
+  }, [dispatch])
 
   const displaychange = (e) => {
     setItem({

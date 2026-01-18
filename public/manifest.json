@@ -1,6 +1,6 @@
 {
   "name": "Utility tools extension",
-  "version": "1.0.0",
+  "version": "2.5.0",
   "description": "Extension that provides free utility tools",
   "manifest_version": 3,
   "icons": {

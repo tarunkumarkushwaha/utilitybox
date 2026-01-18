@@ -93,18 +93,6 @@ const AlarmClock = () => {
         );
     };
 
-    // useEffect(() => {
-    //     chrome.storage.local.get(["alarmRang"], (result) => {
-    //         if (result.alarmRang) {
-    //             if (currentsong.current) {
-    //                 currentsong.current.play().catch(err => console.error("Playback failed", err));
-    //             }
-
-    //             chrome.storage.local.remove("alarmRang");
-    //         }
-    //     });
-    // }, []);
-
 
     // Clear Alarm
     const alarmClear = () => {
@@ -129,7 +117,7 @@ const AlarmClock = () => {
                 {/* Clock Section */}
                 <div
                     className="flex flex-col justify-center items-center cursor"
-                    title="Click to open menu"
+                    title="Click to set reminder"
                     onClick={() => setclockSetting(true)}
                 >
                     <div className="flex justify-center items-center mb-2">
@@ -138,6 +126,8 @@ const AlarmClock = () => {
                     </div>
                     <div className="text-xl sm:text-2xl mb-4 text-center">{date}</div>
                 </div>
+
+                <button className='w-32 m-2' onClick={() => setclockSetting(true)}>Set Reminder</button>
 
                 {/* Calendar Section */}
                 <div className="bg-white bg-opacity-70 text-black rounded-xl p-4 shadow-md w-full max-w-[500px]">

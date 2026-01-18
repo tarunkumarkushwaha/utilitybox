@@ -6,7 +6,8 @@ export const loadTodos = createAsyncThunk(
   "todo/loadTodos",
   async () => {
     const data = await safeStorageGet("items");
-    return data ? JSON.parse(data) : [];
+    // console.log(data,"todo old")
+    return Array.isArray(data) ? data : [];
   }
 );
 
