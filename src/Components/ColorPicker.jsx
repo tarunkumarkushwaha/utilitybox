@@ -163,7 +163,12 @@ const ColorPicker = () => {
                             <div
                                 key={i}
                                 title={c.hex}
-                                onClick={() => copy(c.hex, "HEX")}
+                                onClick={() => {
+                                    copy(c.hex, "HEX");
+                                    setHex(c.hex);
+                                    setRgb(c.rgb);
+                                    setHsl(c.hsl)
+                                }}
                                 className="w-6 h-6 rounded border-black cursor-pointer border hover:scale-110 transition"
                                 style={{ backgroundColor: c.hex }}
                             />

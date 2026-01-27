@@ -248,15 +248,15 @@ function Notepad() {
 
       <div className={`flex mt-2 flex-wrap gap-2 justify-center items-center`} >
 
-        <button title='Capitalise' className="text-center font-bold w-8 border-transparent" onClick={capital1st}>
+        <button title='Capitalise' className="text-center text-sm font-bold w-8 border-transparent" onClick={capital1st}>
           Aa
         </button>
-        <button title='all small' className="text-center font-bold w-8 border-transparent" onClick={downclick}>
+        <button title='all small' className="text-center text-sm font-bold w-8 border-transparent" onClick={downclick}>
           aa
         </button>
-        <button style={{ backgroundColor: font == 'italic' ? "grey" : "transparent" }} title='italic' className="text-center italic w-8 border-transparent" onClick={fontstylecng}>
+        {/* <button style={{ backgroundColor: font == 'italic' ? "grey" : "transparent" }} title='italic' className="text-center italic w-8 border-transparent" onClick={fontstylecng}>
           <FormatItalicIcon />
-        </button>
+        </button> */}
         <button title='bullets' style={{
           backgroundColor: listType === "bullet" ? "grey" : "transparent"
         }}
@@ -266,7 +266,7 @@ function Notepad() {
         <button title='number list' style={{
           backgroundColor: listType === "number" ? "grey" : "transparent"
         }}
-          className="text-center font-bold w-8 border-transparent" onClick={() => listType !== "number" ? setlistType("number") : setlistType("none")}>
+          className="text-center font-bold text-sm w-8 border-transparent" onClick={() => listType !== "number" ? setlistType("number") : setlistType("none")}>
           1.
         </button>
 
@@ -283,7 +283,7 @@ function Notepad() {
           <PublishedWithChangesIcon />
         </button>
 
-        <select title='font-size' id="cards2" onChange={fontsizecng} className='select rounded-2xl w-16 focus:outline-none border-transparent'>
+        <select title='font-size' id="cards2" onChange={fontsizecng} className='select rounded-2xl w-14 text-sm focus:outline-none border-transparent'>
           <option value="larger">Size</option>
           <option value="larger">normal</option>
           <option value="medium">very small</option>
@@ -291,8 +291,11 @@ function Notepad() {
           <option value="x-large">large</option>
           <option value="xx-large">larger</option>
         </select>
-        <button title='replace' className="text-center w-16 font-bold border-transparent" onClick={() => setshowtab(!showtab)}>
+        <button title='tabs' className="text-center w-10 text-sm font-bold border-transparent" onClick={() => setshowtab(!showtab)}>
           Tabs
+        </button>
+        <button title='clipboard' className="text-center w-20 text-sm font-bold border-transparent" onClick={() => console.log("clipboard")}>
+          Clipboard
         </button>
         <button title='download as .txt' className="text-center w-8 border-transparent" onClick={requestTarunToDownload}>
           <DownloadIcon />
@@ -302,8 +305,8 @@ function Notepad() {
         Component={<Replacemodal closemodal={closemodal} newword={newword} prevword={prevword} setNewword={setNewword} setPrevword={setPrevword} />}
         duration={150}
         isshowComponent={select}
-        mountAnimationclass={"smooth-entry"}
-        unmountAnimationclass={"smooth-exit"}
+        mountAnimationclass={"tab-enter"}
+        unmountAnimationclass={"tab-exit"}
       />
       <UseAnimation
         Component={<AddTabModal
@@ -314,17 +317,51 @@ function Notepad() {
         />}
         duration={150}
         isshowComponent={showAddTabModal}
-        mountAnimationclass={"smooth-entry"}
-        unmountAnimationclass={"smooth-exit"}
+        mountAnimationclass={"tab-enter"}
+        unmountAnimationclass={"tab-exit"}
       />
 
-      {showtab && <div className="flex justify-center items-center pt-5 gap-2">
-        {tab.map((item) => (
-          <Tabs key={item.sno} tab={tab} activeTab={activeTab} ontabClick={ontabClick} removeTab={removeTab} data={item} />
-        ))}
-        <button className='p-2 w-8 font-bold' onClick={openAddTabModal}>+</button>
-        <button className='p-2 w-20' onClick={closeAllTabs}>close all</button>
-      </div>}
+      <UseAnimation
+        isshowComponent={showtab}
+        duration={200}
+        mountAnimationclass="tab-enter"
+        unmountAnimationclass="tab-exit"
+        Component={
+          <div
+            className="
+        flex items-center justify-center gap-2 px-3 p-1
+        overflow-x-auto overflow-y-hidden
+        scrollbar-hide mt-2 
+        bg-white 
+      "
+          >
+            {tab.map((item) => (
+              <Tabs
+                key={item.sno}
+                tab={tab}
+                activeTab={activeTab}
+                ontabClick={ontabClick}
+                removeTab={removeTab}
+                data={item}
+              />
+            ))}
+
+            <button
+              className="min-w-[32px] h-8 z-10 rounded-full bg-gray-100 font-bold hover:bg-gray-200 transition"
+              onClick={openAddTabModal}
+            >
+              +
+            </button>
+
+            <button
+              className="min-w-[80px] h-8 z-10 rounded-xl bg-red-50 text-red-600 text-sm font-semibold hover:outline-red-500 hover:bg-red-100 transition"
+              onClick={closeAllTabs}
+            >
+              Close all
+            </button>
+          </div>
+        }
+      />
 
       <div className="flex justify-center items-center p-2">
         <textarea

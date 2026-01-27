@@ -55,19 +55,16 @@ const Navbar = () => {
                 <NavLink to={"/"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Notepad</NavLink>
               </li>
               <li className="list-none">
-                <NavLink to={"/tools"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Tools</NavLink>
-              </li>
-              <li className="list-none">
-                <NavLink to={"/AlarmClock"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calender</NavLink>
-              </li>
-              <li className="list-none">
-                <NavLink to={"/todo"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Todo</NavLink>
-              </li>
-              <li className="list-none">
                 <NavLink to={"/colorpicker"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Color picker</NavLink>
               </li>
               <li className="list-none">
+                <NavLink to={"/calender"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Calender</NavLink>
+              </li>
+              <li className="list-none">
                 <NavLink to={"/regex"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Regex</NavLink>
+              </li>
+              <li className="list-none">
+                <NavLink to={"/tools"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Tools</NavLink>
               </li>
             </ul>
           </nav>
