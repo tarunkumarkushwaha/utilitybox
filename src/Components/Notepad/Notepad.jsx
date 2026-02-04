@@ -246,7 +246,7 @@ function Notepad() {
   return (
     <div className='smooth-entry'>
 
-      <div className={`flex mt-2 flex-wrap gap-2 justify-center items-center`} >
+      <div className={`flex mt-1 flex-wrap gap-2 justify-center items-center`} >
 
         <button title='Capitalise' className="text-center text-sm font-bold w-8 border-transparent" onClick={capital1st}>
           Aa
@@ -294,9 +294,9 @@ function Notepad() {
         <button title='tabs' className="text-center w-10 text-sm font-bold border-transparent" onClick={() => setshowtab(!showtab)}>
           Tabs
         </button>
-        <button title='clipboard' className="text-center w-20 text-sm font-bold border-transparent" onClick={() => console.log("clipboard")}>
+        {/* <button title='clipboard' className="text-center w-20 text-sm font-bold border-transparent" onClick={() => console.log("clipboard")}>
           Clipboard
-        </button>
+        </button> */}
         <button title='download as .txt' className="text-center w-8 border-transparent" onClick={requestTarunToDownload}>
           <DownloadIcon />
         </button>
@@ -372,10 +372,10 @@ function Notepad() {
           style={{
             fontStyle: font,
             fontSize: size,
-            minHeight: "62vh",
+            minHeight: "56vh",
             width: "96vw",
           }}
-          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl m-4 mx-auto p-3 md:min-h-[60vh] text-lg focus:outline-none resize-none"
+          className="shadow-[0px_5px_5px_rgba(13,69,77,0.5)] border border-slate-400 rounded-2xl m-1 mx-auto p-3 md:min-h-[60vh] text-lg focus:outline-none resize-none"
         />
 
       </div>

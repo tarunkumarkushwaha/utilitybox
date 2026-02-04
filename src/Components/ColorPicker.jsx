@@ -47,7 +47,7 @@ const ColorPicker = () => {
         const filtered = prev.filter(c => c.hex !== hexValue);
 
         // add to top & limit length
-        const updated = [newColor, ...filtered].slice(0, 8);
+        const updated = [newColor, ...filtered].slice(0, 16);
 
         setColorHistory(updated);
 
@@ -113,7 +113,7 @@ const ColorPicker = () => {
     }, []);
 
     return (
-        <div className=" p-4 bg-gradient-to-b h-[75vh] from-white to-blue-300 shadow-md text-gray-800">
+        <div className="smooth-entry p-2 bg-gradient-to-b from-white to-blue-300 shadow-md text-gray-800">
             {copied && (
                 <div className="fixed top-3 left-1/2 -translate-x-1/2 px-3 py-1.5
                   text-xs rounded-md bg-gray-900 text-white shadow-lg
@@ -122,11 +122,11 @@ const ColorPicker = () => {
                 </div>
             )}
 
-            <h3 className="text-sm text-center font-semibold mb-3"> Color Picker</h3>
+            <h3 className="text-sm text-center font-semibold mb-2"> Color Picker</h3>
 
 
 
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-2">
                 <div
                     className="w-10 h-10 rounded-md border"
                     style={{ backgroundColor: hex }}
@@ -137,11 +137,16 @@ const ColorPicker = () => {
                 >
                     Pick Color
                 </button>
+                 <button
+                onClick={() => {
+                    setColorHistory([]);
+                    safeStorageSet("colorHistory", []);
+                }}
+                className="flex-1 text-sm rounded-md max-w-28 bg-red-900 text-white hover:bg-gray-800 transition"
+            >
+                Clear
+            </button>
             </div>
-            <p className="text-[10px] text-gray-900 mt-2">
-                Popup may close while picking — color will be saved
-            </p>
-
 
             <div className="space-y-2 text-xs">
                 <Value label="HEX" value={hex} onCopy={copy} />
@@ -150,15 +155,15 @@ const ColorPicker = () => {
 
             </div>
 
-            <p className="text-[10px] text-gray-900 mt-3">
+            <p className="text-[10px] text-gray-900 mt-1">
                 Click any value to copy
             </p>
 
             {colorHistory.length > 0 && (
-                <div className="mt-3">
+                <div className="mt-1">
                     <p className="text-[16px] text-center text-gray-900 mb-1">Recent colors</p>
 
-                    <div className="flex gap-2 flex-wrap p-5 border-black rounded-xl bg-white">
+                    <div className="flex gap-2 flex-wrap p-1 border-black rounded-xl bg-white">
                         {colorHistory.map((c, i) => (
                             <div
                                 key={i}
@@ -169,24 +174,13 @@ const ColorPicker = () => {
                                     setRgb(c.rgb);
                                     setHsl(c.hsl)
                                 }}
-                                className="w-6 h-6 rounded border-black cursor-pointer border hover:scale-110 transition"
+                                className="w-6 h-6 rounded-lg border-gray-800 cursor-pointer border hover:scale-110 transition"
                                 style={{ backgroundColor: c.hex }}
                             />
                         ))}
                     </div>
                 </div>
             )}
-
-            {colorHistory.length > 0 && <button
-                onClick={() => {
-                    setColorHistory([]);
-                    safeStorageSet("colorHistory", []);
-                }}
-                className="flex-1 m-3 text-sm rounded-md bg-gray-900 text-white hover:bg-gray-800 transition"
-            >
-                Clear
-            </button>}
-
         </div>
     );
 };

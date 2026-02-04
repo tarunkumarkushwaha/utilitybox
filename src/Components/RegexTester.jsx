@@ -108,7 +108,7 @@ const RegexTester = () => {
     };
 
     return (
-        <div className="p-3 w-full text-sm space-y-3 bg-gradient-to-b h-[75vh] from-white to-blue-300 shadow-md text-black">
+        <div className="smooth-entry p-3 w-full text-sm space-y-3 bg-gradient-to-b from-white to-blue-300 shadow-md text-black">
             <div className="flex justify-between items-center">
                 <h3 className="font-semibold text-base">Regex Tester</h3>
 

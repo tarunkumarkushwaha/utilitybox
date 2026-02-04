@@ -5,7 +5,7 @@ import {
   Routes
 } from "react-router-dom";
 import Footer from "./Components/Footer";
-import Tools from "./Components/Tools/Tools";
+import ToolsPage from "./Components/Tools/ToolsPage";
 import Notepad from "./Components/Notepad/Notepad";
 import Navbar from "./Components/Navbar";
 import ColorPicker from "./Components/ColorPicker";
@@ -22,7 +22,7 @@ function App() {
           <Route path="/colorpicker" element={<><Navbar /><ColorPicker /></>} />
           <Route path="/regex" element={<><Navbar /><RegexTester /></>} />
           <Route path="/calender" element={<><Navbar /><Calender/></>} />
-          <Route path="/tools" element={<><Navbar /><Tools /></>} />
+          <Route path="/tools" element={<><Navbar /><ToolsPage /></>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>

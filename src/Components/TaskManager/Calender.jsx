@@ -61,10 +61,10 @@ const Calender = () => {
   return (
     <>
       <div
-        className="clock-body smooth-entry min-h-screen flex flex-col justify-start items-center p-4 bg-cover bg-center"
+        className="clock-body smooth-entry flex flex-col bg-gradient-to-b from-white to-blue-300 justify-start items-center p-2 bg-cover bg-center"
       >
         <AlarmClock />
-        <div className="bg-white bg-opacity-70 text-black rounded-xl p-4 shadow-md w-full max-w-[500px]">
+        <div className="bg-white bg-opacity-70 text-black rounded-xl p-2 shadow-md w-full max-w-[500px]">
           <div className="w-full">
             {showAddTask && <AddTaskModal
               item={item}

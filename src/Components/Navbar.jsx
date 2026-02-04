@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/images/image.png";
 import MenuIcon from "@mui/icons-material/Menu";
 import { safeStorageGet, safeStorageSet } from "../utils/safeStorage";
+import UseAnimation from '../customhooks/TarunAnimation';
 
 const LAST_ROUTE_KEY = "lastSelectedRoute";
 
@@ -46,10 +47,11 @@ const Navbar = () => {
           <button className='absolute top-4 left-4 w-12 text-black bg-white' onClick={togglenav}>
             <MenuIcon />
           </button>
-          <img className='w-44 h-16 ml-0 rounded-xl' src={Logo} alt="Utility Box" />
+          <img className='w-32 h-12 ml-0 rounded-xl' src={Logo} alt="Utility Box" />
         </div>
-        {nav &&
-          <nav className="bg-gradient-to-b from-blue-300 to-white min-h-16 font-medium smooth-entry">
+
+        <UseAnimation
+          Component={<nav className="bg-gradient-to-b from-blue-300 to-white min-h-14 font-medium tab-enter">
             <ul className="flex flex-wrap justify-center gap-1">
               <li className="list-none">
                 <NavLink to={"/"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Notepad</NavLink>
@@ -67,8 +69,12 @@ const Navbar = () => {
                 <NavLink to={"/tools"} className="block px-4 py-3 text-black no-underline hover:bg-blue-200 rounded-xl">Tools</NavLink>
               </li>
             </ul>
-          </nav>
-        }
+          </nav>}
+          duration={150}
+          isshowComponent={nav}
+          mountAnimationclass={"tab-enter"}
+          unmountAnimationclass={"tab-exit"}
+        />
       </header>
     </>
   );
